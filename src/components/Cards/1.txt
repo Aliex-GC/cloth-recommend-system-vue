@@ -1,0 +1,7 @@
+billing
+	import CardCredit from "../components/Cards/CardCredit"
+	import WidgetSalary from "../components/Widgets/WidgetSalary"
+	import CardPaymentMethods from "../components/Cards/CardPaymentMethods"
+	import CardInvoices from "../components/Cards/CardInvoices"
+	import CardBillingInfo from "../components/Cards/CardBillingInfo"
+	import CardTransactions from "../components/Cards/CardTransactions"
