@@ -23,6 +23,11 @@ import router from './router'
 
 import './scss/app.scss';
 
+import VueAwesomeSwiper from 'vue-awesome-swiper'
+import 'swiper/css/swiper.css'
+
+// 使用swiper
+Vue.use(VueAwesomeSwiper)
 Vue.use(Antd);
 
 Vue.config.productionTip = false

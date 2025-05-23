@@ -12,7 +12,7 @@ let routes = [
 	{
 		path: '/',
 		name: 'Home',
-		redirect: '/sign-in',
+		redirect: '/dashboard',
 	},
 	{
 		path: '/dashboard',
@@ -30,25 +30,52 @@ let routes = [
 		component: () => import('../views/Layout.vue'),
 	},
 	{
-		path: '/tables',
+		path: '/recommend',
 		name: '推荐',
 		layout: "dashboard",
-		component: () => import('../views/Tables.vue'),
+		component: () => import('../views/Recommend.vue'),
 	},
 	{
-		path: '/billing',
+		path: '/generate',
 		name: '生成',
 		layout: "dashboard",
-		component: () => import('../views/Billing.vue'),
+		component: () => import('../views/Generate.vue'),
 	},
 	{
-		path: '/rtl',
+		path: '/match',
 		name: '搭配',
 		layout: "dashboard",
-		meta: {
-			layoutClass: 'dashboard-rtl',
-		},
-		component: () => import('../views/RTL.vue'),
+		component: () => import('../views/Match.vue'),
+	},
+    {
+		path: '/history',
+		name: '推荐历史',
+		layout: "dashboard",
+		component: () => import('../views/RecommendHistory.vue'),
+	},
+    {
+		path: '/generate_history',
+		name: '生成历史',
+		layout: "dashboard",
+		component: () => import('../views/GenerateHistory.vue'),
+	},
+    {
+		path: '/find_history',
+		name: '检索历史',
+		layout: "dashboard",
+		component: () => import('../views/FindHistory.vue'),
+	},
+    {
+		path: '/match_history',
+		name: '搭配历史',
+		layout: "dashboard",
+		component: () => import('../views/MatchHistory.vue'),
+	},
+    {
+		path: '/index',
+		name: '主页',
+		layout: "dashboard",
+		component: () => import('../views/Index.vue'),
 	},
 	{
 		path: '/Profile',
@@ -60,9 +87,21 @@ let routes = [
 		component: () => import('../views/Profile.vue'),
 	},
 	{
-		path: '/sign-in',
-		name: 'Sign-In',
+		path: '/login',
+		name: 'Login',
 		component: () => import('../views/Sign-In.vue'),
+	},
+    {
+		path: '/wear',
+		name: 'Virtual Wear',
+        layout: "dashboard",
+		component: () => import('../views/Wear.vue'),
+	},
+    {
+		path: '/find',
+		name: 'Clip Find',
+        layout: "dashboard",
+		component: () => import('../views/Find.vue'),
 	},
 	{
 		path: '/sign-up',

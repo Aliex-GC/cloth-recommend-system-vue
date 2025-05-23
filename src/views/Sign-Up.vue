@@ -102,13 +102,11 @@ export default {
               password: values.password,
             });
             message.success(response.data.message);
+            setTimeout(() => {
+                this.$router.push("/login");
+                }, 2000);
           } catch (error) {
-            console.error("Error:", error); // 打印错误信息
-            console.log("Form values:", values); // 打印表单数据
-            message.error(
-              "Login failed:",
-              error.response ? error.response.data.message : error.message
-            );
+            this.$message.error(error.response.data.message);
             // Handle login error (e.g., show error message to user)
           }
         }

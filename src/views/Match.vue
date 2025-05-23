@@ -25,25 +25,14 @@
             <a-textarea v-model="description" :rows="4" />
           </a-form-item>
 
-          <a-form-item>
-            <a-button
-              type="primary"
-              @click="handleSubmit"
-              :disabled="!isFormValid || loading"
-              :loading="loading"
-              block
-            >
-              提交全部信息
-            </a-button>
-          </a-form-item>
         </a-form>
       </a-card>
     </a-col>
 
     <!-- 右侧上传卡片 -->
     <a-col :span="12">
-      <a-card title="图片上传" class="upload-card">
-        <div class="upload-wrapper">
+      <a-card title="图片上传" class="upload-card" style="min-height: 365px;">
+        <div class="upload-wrapper" >
           <a-upload-dragger
             name="file"
             :multiple="false"
@@ -54,40 +43,72 @@
             :action="''"
             @change="handleChange"
           >
-            <div class="upload-content">
-              <a-icon type="upload" style="font-size: 48px; color: #1890ff" />
-              <div class="upload-text">
-                <p class="upload-main-text">点击或拖拽上传图片</p>
-                <p class="upload-sub-text">支持格式：JPEG/PNG，最大5MB</p>
+          <div class="upload-content">
+                <!-- 预览图片覆盖上传区域 -->
+                <div v-if="currentImage" class="preview-overlay">
+                  <img
+                    :src="currentImage"
+                    class="preview-image"
+                    alt="图片预览"
+                  />
+                  <div class="preview-meta">
+                    <h6>{{ uploadedFileName }}</h6>
+                    <a-button
+                      type="link"
+                      @click="handlePreviewDelete"
+                      class="delete-btn"
+                    >
+                      删除
+                    </a-button>
+                  </div>
+                </div>
+                
+                <!-- 上传提示（只在没有图片时显示） -->
+                <div v-if="!currentImage" class="upload-hint">
+                  <a-icon type="upload" style="font-size: 48px;margin-top: 48px; color: #1890ff" />
+                  <div class="upload-text" style="margin-top: 28px;" >
+                    <p class="upload-main-text">点击或拖拽上传图片</p>
+                    <p class="upload-sub-text">支持格式：JPEG/PNG，最大5MB</p>
+                  </div>
+                </div>
               </div>
-            </div>
           </a-upload-dragger>
 
-          <!-- 预览区域集成在卡片内 -->
-          <div v-if="currentImage" class="preview-container">
-            <div class="preview-meta">
-              <h4>{{ uploadedFileName }}</h4>
-              <a-button
-                type="link"
-                @click="handlePreviewDelete"
-                style="margin-left: 8px"
-              >
-                删除
-              </a-button>
-            </div>
-            <img
-              :src="currentImage"
-              style="width: 100%; height: 75px; object-fit: contain"
-              alt="图片预览"
-            />
-          </div>
+         
+          
         </div>
       </a-card>
     </a-col>
 
     <!-- 图片列表卡片 -->
-    <a-col :span="24" style="margin-top: 16px">
-      <a-card title="生成图片列表" v-if="imageList.length > 0">
+    <a-col :span="24" style="margin-top: 16px"> 
+      <a-card title="生成图片列表" v-if="imageList.length >= 0" >
+        <p style="margin-bottom: 10px;font-size: medium;">搭配类别</p>
+        <div style="display: flex; margin-bottom: 19px; ">
+            <a-select v-model="targetCategory" label="选择分类" style="width: 200px">
+              <a-select-option value="all-body">全身</a-select-option>
+              <a-select-option value="bottoms">下装</a-select-option>
+              <a-select-option value="tops">上装</a-select-option>
+              <a-select-option value="outerwear">外套</a-select-option>
+              <a-select-option value="bags">包袋</a-select-option>
+              <a-select-option value="shoes">鞋履</a-select-option>
+              <a-select-option value="accessories">配饰</a-select-option>
+              <a-select-option value="scarves">围巾</a-select-option>
+              <a-select-option value="hats">帽子</a-select-option>
+              <a-select-option value="sunglasses">太阳镜</a-select-option>
+              <a-select-option value="jewellery">珠宝</a-select-option>
+              <a-select-option value="unknown">其他</a-select-option>
+            </a-select>
+        <a-button
+              type="primary"
+              @click="handleSubmit"
+              :disabled="!isFormValid "
+              :loading="loading"
+              style="width: 150px; margin-left: 16px"
+            >
+              生成搭配
+            </a-button>
+        </div>
         <a-list
           :data-source="imageList"
           :grid="{ gutter: 16, column: 4 }"
@@ -117,6 +138,7 @@ export default {
   data() {
     return {
       selectedCategory: null,
+      targetCategory: null, // 目标类别
       description: "",
       currentImage: null, // 当前预览图片
       uploadedFile: null, // 上传文件对象
@@ -128,7 +150,7 @@ export default {
   },
   computed: {
     isFormValid() {
-      return this.selectedCategory && this.description && this.currentImage;
+      return this.selectedCategory && this.description && this.currentImage &&this.targetCategory;
     },
   },
   methods: {
@@ -175,6 +197,7 @@ export default {
       formData.append("category", this.selectedCategory); // 添加类别
       formData.append("description", this.description); // 添加描述
       formData.append("file", this.uploadedFile); // 添加图片文件
+      formData.append("targetcategory", this.targetCategory); // 添加类别
       try {
         // 发送 POST 请求
         const response = await axiosInstance.post(
@@ -184,6 +207,7 @@ export default {
             headers: {
               "Content-Type": "multipart/form-data", // 设置请求头
             },
+            timeout: 60000,
           }
           
         );
@@ -213,6 +237,7 @@ export default {
 
     clearForm() {
       this.selectedCategory = null;
+      this.targetCategory = null;
       this.description = "";
       this.currentImage = null;
       this.uploadedFile = null;
@@ -249,14 +274,15 @@ export default {
   
   <style scoped>
 .upload-wrapper {
-  padding: 16px;
+  padding: 2px;
 }
 
 .upload-content {
-  padding: 20px 0;
+  padding: 2px 0;
   display: flex;
   flex-direction: column;
   align-items: center;
+  min-height: 225px;
 }
 
 .preview-container {
@@ -266,17 +292,11 @@ export default {
   padding: 4px;
 }
 
-.preview-container {
-  max-width: 100%;
-  overflow: auto;
-  padding: 16px;
-  background: #f8f9fa;
-  margin-top: 16px;
-}
+
 
 .preview-image {
   max-width: 80%;
-  max-height: 400px;
+  max-height: 200px;
   object-fit: contain;
   margin: 12px auto;
   border: 1px solid #e8e8e8;

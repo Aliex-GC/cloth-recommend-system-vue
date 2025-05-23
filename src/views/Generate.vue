@@ -8,6 +8,14 @@
             <h3>AI文生图</h3>
           </div>
           <div class="card-body">
+            <a-form layout="vertical">
+              <a-form-item label="选择模型">
+                <a-select v-model="model" style="width: 100%">
+                  <a-select-option value="wanx2.1-t2i-turbo">wanx2.1-t2i-turbo</a-select-option>
+                  <a-select-option value="diffusion-model">diffusion-model</a-select-option>
+                </a-select>
+              </a-form-item>
+              </a-form>
             <a-textarea
               v-model="inputText"
               placeholder="请输入内容"
@@ -17,6 +25,7 @@
               type="primary"
               class="generate-btn"
               @click="generateImage"
+              :loading="loading"
             >
               实时生成
             </a-button>
@@ -32,30 +41,18 @@
           </div>
           <div class="card-body">
             <div class="main-image-container">
-              <img :src="item.url" alt="" class="main-image" />
-              <div class="image-controls">
-                <div class="zoom-button" @click="zoomImage">🔍 点击放大</div>
-              </div>
-            </div>
-
-            <!-- 放大后的遮罩层 -->
-            <div v-if="isZoomed" class="zoom-overlay" @click="closeZoom">
-              <div class="zoomed-image-container">
-                <img
+              <img
                 v-if="item.url"
                 :src="item.url"
                 alt="生成图片"
                 class="main-image"
               />
-              <!-- 如果没有图片，显示占位图和提示信息 -->
-              <div v-else class="no-image">
-                <img :src="defaultImage" alt="默认图片" class="placeholder-image" />
+              <div v-else style="text-align: center">
+                <img :src="defaultImage" alt="默认图片" class="main-image" />
                 <p>暂无图片，请先生成图片</p>
-                <button class="close-button" @click.stop="closeZoom">×</button>
               </div>
             </div>
           </div>
-        </div>
         </div>
       </a-col>
     </a-row>
@@ -72,19 +69,22 @@ export default {
       isZoomed: false,
       item: { url: "" }, // 初始化 item
       defaultImage: require("@/assets/test.jpg"),
+      loading: false,
+      model: "wanx2.1-t2i-turbo", // 默认模型
     };
   },
   methods: {
     async generateImage() {
-      if (this.inputText=="") {
-        this.$message.warning("请上传图片");
+      if (this.inputText == "") {
+        this.$message.warning("请输入内容！");
         return;
       }
       this.loading = true; // 开始加载
       this.$message.success("提交成功！");
       // 创建 FormData 对象
       const formData = new FormData();
-      formData.append("text", this.inputText); 
+      formData.append("text", this.inputText);
+      formData.append("model", this.model); 
       try {
         // 发送 POST 请求
         const response = await axiosInstance.post("/generate/", formData, {
@@ -196,6 +196,7 @@ export default {
           height: auto;
           display: block;
           border-radius: 4px;
+          margin-left: 100px;
         }
 
         .image-controls {
@@ -263,6 +264,10 @@ export default {
               background: #f0f0f0;
             }
           }
+        }
+        .placeholder-image {
+          height: auto;
+          width: auto;
         }
       }
     }

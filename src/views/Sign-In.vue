@@ -5,7 +5,7 @@
 
 <template>
   <div class="sign-in">
-    <a-row type="flex" :gutter="[24, 24]" justify="space-around" align="middle">
+    <a-row type="flex" :gutter="[0, 24]" justify="space-around" align="start" style="padding-top: 30px;" >
       <!-- Sign In Form Column -->
       <a-col
         :span="24"
@@ -14,7 +14,7 @@
         :xl="{ span: 6, offset: 2 }"
         class="col-form"
       >
-        <h1 class="mb-15">登录</h1>
+        <h1 class="mb-15" style="color: #000;">登录</h1>
         <h5 class="font-regular text-muted">请输入你的账号和密码</h5>
 
         <!-- Sign In Form -->
@@ -63,14 +63,13 @@
         <p class="font-semibold text-muted">
           还没有账号?
           <router-link to="/sign-up" class="font-bold text-dark"
-            >注册</router-link
-          >
+            >点我注册</router-link>
         </p>
       </a-col>
       <!-- / Sign In Form Column -->
 
       <!-- Sign In Image Column -->
-      <a-col :span="22" :md="10" :lg="10" :xl="10" class="col-img">
+      <a-col :span="14" :md="6" :lg="6" :xl="6" class="col-img" style="padding-top: 0px;margin-left: -16px;">
         <img src="images/login.png" alt="" />
       </a-col>
       <!-- Sign In Image Column -->
@@ -110,17 +109,11 @@ export default {
                 withCredentials: true, // 启用凭证（Cookie）
               }
             );
-            //setUsername(values.username);
             this.$message.success(response.data.message);
-            //console.log("success");
-            this.$router.push("/tables");
-            // Handle successful login (e.g., redirect or set authentication token)
+            this.$router.push("/index");
           } catch (error) {
-            message.error(
-              "Login failed:",
-              error.response ? error.response.data.message : error.message
-            );
-            // Handle login error (e.g., show error message to user)
+            this.$message.error(error.response.data.message);
+           
           }
         }
       });
